@@ -126,6 +126,7 @@ void TrajectorySamplerNode::commandTimerCallback(const ros::TimerEvent&) {
     }
     mav_msgs::msgMultiDofJointTrajectoryFromEigen(trajectory_point, &msg);
     msg.points[0].time_from_start = ros::Duration(current_sample_time_);
+    msg.header.stamp = start_time_;
     command_pub_.publish(msg);
     current_sample_time_ += dt_;
   } else {

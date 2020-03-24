@@ -55,7 +55,7 @@ PolynomialOptimization<_N>::PolynomialOptimization(size_t dimension)
 
 template <int _N>
 bool PolynomialOptimization<_N>::setupFromVertices(
-    const Vertex::Vector& vertices, const std::vector<double>& times,
+    const Vertex::Vector& vertices, const std::vector<double>& times,           // times vector has estimated segment time in it and vertices the 2 endpoints
     int derivative_to_optimize) {
   CHECK(derivative_to_optimize >= 0 &&
         derivative_to_optimize <= kHighestDerivativeToOptimize)
@@ -64,23 +64,23 @@ bool PolynomialOptimization<_N>::setupFromVertices(
       << "th order polynomial. This is not possible, you either need a higher "
          "order polynomial or a smaller derivative to optimize.";
 
-  derivative_to_optimize_ = derivative_to_optimize;
-  vertices_ = vertices;
-  segment_times_ = times;
+  // sets the time, the vertices and the derivative_to_optimize to the member variables after checked if they are valid
+  derivative_to_optimize_ = derivative_to_optimize;                             // can be given in planTrajectory function
+  vertices_ = vertices;                                                         // are passed also from planTrajectory function
+  segment_times_ = times;                                                       // typically only 1 estimated segment time (see estimateSegmentTimes in vertex.cpp)
 
-  n_vertices_ = vertices.size();
-  n_segments_ = n_vertices_ - 1;
+  n_vertices_ = vertices.size();                                                // typically 2
+  n_segments_ = n_vertices_ - 1;                                                // typically 1
 
-  segments_.resize(n_segments_, Segment(N, dimension_));
+  segments_.resize(n_segments_, Segment(N, dimension_));                        // since segments_ is just a std::vector of segments, segments_ gets the length of n_segments_ and is filled with segments of the correct dimension_ and N but time 0.0
 
   CHECK(n_vertices_ == times.size() + 1)
       << "Size of times must be one less than positions.";
 
-  inverse_mapping_matrices_.resize(n_segments_);
-  cost_matrices_.resize(n_segments_);
+  inverse_mapping_matrices_.resize(n_segments_);                                // vector of inverse mapping matrices that gets resized to the number of segments bcs there's a inverse mapping matrix for each segment
+  cost_matrices_.resize(n_segments_);                                           // vector of square matrices that gets resized to the number of segments bcs there's a cost matrix for each segment
 
-  // Iterate through all vertices and remove invalid constraints (order too
-  // high).
+  // Iterate through all vertices and remove invalid constraints (order too high).
   for (size_t vertex_idx = 0; vertex_idx < n_vertices_; ++vertex_idx) {
     Vertex& vertex = vertices_[vertex_idx];
 
@@ -103,6 +103,7 @@ bool PolynomialOptimization<_N>::setupFromVertices(
       vertex = vertex_tmp;
     }
   }
+  // up until here only invalid constraints are deleted because for example we have a derivative constraint to a derivative too high
   updateSegmentTimes(times);
   setupConstraintReorderingMatrix();
   return true;
@@ -285,7 +286,7 @@ void PolynomialOptimization<_N>::updateSegmentsFromCompactConstraints() {
 template <int _N>
 void PolynomialOptimization<_N>::updateSegmentTimes(
     const std::vector<double>& segment_times) {
-  const size_t n_segment_times = segment_times.size();
+  const size_t n_segment_times = segment_times.size();                          // stores number of segment times which matches number of segments and is typically 1 in our case
   CHECK(n_segment_times == n_segments_)
       << "Number of segment times (" << n_segment_times
       << ") does not match number of segments (" << n_segments_ << ")";
@@ -296,10 +297,10 @@ void PolynomialOptimization<_N>::updateSegmentTimes(
     const double segment_time = segment_times[i];
     CHECK_GT(segment_time, 0) << "Segment times need to be greater than zero";
 
-    computeQuadraticCostJacobian(derivative_to_optimize_, segment_time,
+    computeQuadraticCostJacobian(derivative_to_optimize_, segment_time,         // compute quadratic cost jacobian for current segment time
                                  &cost_matrices_[i]);
     SquareMatrix A;
-    setupMappingMatrix(segment_time, &A);
+    setupMappingMatrix(segment_time, &A);                                       // set up the square mapping matrix for current segment_time
     invertMappingMatrix(A, &inverse_mapping_matrices_[i]);
   };
 }

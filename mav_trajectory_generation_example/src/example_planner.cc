@@ -6,7 +6,7 @@ ExamplePlanner::ExamplePlanner(ros::NodeHandle& nh) :
     max_a_(2.0),
     current_velocity_(Eigen::Vector3d::Zero()),
     current_pose_(Eigen::Affine3d::Identity()) {
-      
+
   // Load params
   if (!nh_.getParam(ros::this_node::getName() + "/max_v", max_v_)){
     ROS_WARN("[example_planner] param max_v not found");
@@ -130,7 +130,7 @@ bool ExamplePlanner::publishTrajectory(const mav_trajectory_generation::Trajecto
   pub_markers_.publish(markers);
 
   // send trajectory to be executed on UAV
-  mav_planning_msgs::PolynomialTrajectory msg;
+  mav_planning_msgs::PolynomialTrajectory4D msg;
   mav_trajectory_generation::trajectoryToPolynomialTrajectoryMsg(trajectory,
                                                                  &msg);
   msg.header.frame_id = "world";
@@ -138,4 +138,3 @@ bool ExamplePlanner::publishTrajectory(const mav_trajectory_generation::Trajecto
 
   return true;
 }
-

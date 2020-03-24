@@ -127,6 +127,7 @@ Vertex::Vector createRandomVertices1D(int maximum_derivative, size_t n_segments,
                               Eigen::VectorXd::Constant(1, pos_max), seed);
 }
 
+// adds constraint at stated place
 void Vertex::addConstraint(int derivative_order,
                            const Eigen::VectorXd& constraint) {
   CHECK_EQ(constraint.rows(), static_cast<long>(D_));
@@ -144,6 +145,7 @@ bool Vertex::removeConstraint(int type) {
   }
 }
 
+// sets position constraint and all the other constraints to zero
 void Vertex::makeStartOrEnd(const Eigen::VectorXd& constraint,
                             int up_to_derivative) {
   addConstraint(derivative_order::POSITION, constraint);
@@ -252,21 +254,22 @@ std::vector<double> estimateSegmentTimesVelocityRamp(
   return segment_times;
 }
 
+// magic_fabian_constant is always 6.5 (see header)
 std::vector<double> estimateSegmentTimesNfabian(const Vertex::Vector& vertices,
                                                 double v_max, double a_max,
                                                 double magic_fabian_constant) {
-  CHECK_GE(vertices.size(), 2);
-  std::vector<double> segment_times;
-  segment_times.reserve(vertices.size() - 1);
-  for (size_t i = 0; i < vertices.size() - 1; ++i) {
+  CHECK_GE(vertices.size(), 2);                                                 // bool that checks whether the vertix is bigger or equal to 2
+  std::vector<double> segment_times;                                            // creates vector of segment times that is returned in the end
+  segment_times.reserve(vertices.size() - 1);                                   // requests a certain capacity of the vector, such that no reallocation happens like it does with push_back --> vecotr is now vertices.size()-1 big
+  for (size_t i = 0; i < vertices.size() - 1; ++i) {                            // for loop
     Eigen::VectorXd start, end;
-    vertices[i].getConstraint(derivative_order::POSITION, &start);
+    vertices[i].getConstraint(derivative_order::POSITION, &start);              // store starting vertex of a segment in start and ending vertex of a segment in end, do this for all segments --> for loop
     vertices[i + 1].getConstraint(derivative_order::POSITION, &end);
-    double distance = (end - start).norm();
-    double t = distance / v_max * 2 *
+    double distance = (end - start).norm();                                     // calculate the distance (L^2 norm for the vector between end point and start point of the segment)
+    double t = distance / v_max * 2 *                                           // calculate an estimate of the segment time
                (1.0 + magic_fabian_constant * v_max / a_max *
                           exp(-distance / v_max * 2));
-    segment_times.push_back(t);
+    segment_times.push_back(t);                                                 // store these estimated segment times inside the segment_times vector (if there's only 2 points the vector has only 1 entry)
   }
   return segment_times;
 }
