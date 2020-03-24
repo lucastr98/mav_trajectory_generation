@@ -24,4 +24,8 @@
   <depend>glog_catkin</depend>
   <depend>mav_msgs</depend>
   <depend>nlopt</depend>
+  <depend>tf</depend>
+  <depend>tf2_ros</depend>
+  <depend>tf_conversions</depend>
+  <depend>eigen_conversions</depend>
 </package>

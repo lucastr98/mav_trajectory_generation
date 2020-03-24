@@ -23,6 +23,11 @@
 
 #include <mav_msgs/eigen_mav_msgs.h>
 #include "mav_trajectory_generation/trajectory.h"
+#include <tf2_eigen/tf2_eigen.h>
+#include <tf2_ros/transform_listener.h>
+#include <tf_conversions/tf_eigen.h>
+#include <tf/transform_broadcaster.h>
+#include <eigen_conversions/eigen_msg.h>
 
 namespace mav_trajectory_generation {
 
@@ -38,6 +43,10 @@ bool sampleTrajectoryAtTime(const Trajectory& trajectory, double sample_time,
 bool sampleTrajectoryInRange(const Trajectory& trajectory, double min_time,
                              double max_time, double sampling_interval,
                              mav_msgs::EigenTrajectoryPointVector* states);
+bool sampleTrajectoryInRange_new(const Trajectory& trajectory, double min_time,
+                             double max_time, double sampling_interval,
+                             mav_msgs::EigenTrajectoryPointVector* states,
+                             Eigen::Matrix<double, 3, 2> outlier_rej);
 
 bool sampleTrajectoryStartDuration(
     const Trajectory& trajectory, double start_time, double duration,
@@ -46,13 +55,21 @@ bool sampleTrajectoryStartDuration(
 bool sampleWholeTrajectory(const Trajectory& trajectory,
                            double sampling_interval,
                            mav_msgs::EigenTrajectoryPoint::Vector* states);
+bool sampleWholeTrajectory_new(const Trajectory& trajectory,
+                           double sampling_interval,
+                           mav_msgs::EigenTrajectoryPoint::Vector* states,
+                           Eigen::Matrix<double, 3, 2> outlier_rej,
+			                     bool cut_traj);
 
 bool sampleSegmentAtTime(const Segment& segment, double sample_time,
                          mav_msgs::EigenTrajectoryPoint* state);
 
+bool check_for_outlier(Eigen::Vector3d final_position);
+
 template<class T>
 bool sampleFlatStateAtTime(const T& type, double sample_time,
                            mav_msgs::EigenTrajectoryPoint* state);
+
 
 }  // namespace mav_trajectory_generation
 
