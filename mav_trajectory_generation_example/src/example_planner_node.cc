@@ -16,6 +16,9 @@
 #include  "ros/ros.h"
 #include <mav_trajectory_generation_example/example_planner.h>
 
+#include <math.h>
+#define PI 3.14159265
+
 #include <iostream>
 
 int main(int argc, char** argv) {
@@ -28,11 +31,6 @@ int main(int argc, char** argv) {
   ros::Duration(5.0).sleep();
   ROS_WARN_STREAM("WARNING: CONSOLE INPUT/OUTPUT ONLY FOR DEMONSTRATION!");
 
-  // define set point
-  Eigen::Vector3d position, velocity;
-  position << 0.0, 1.0, 2.0;
-  velocity << 0.0, 0.0, 0.0;
-
   // THIS SHOULD NORMALLY RUN INSIDE ROS::SPIN!!! JUST FOR DEMO PURPOSES LIKE THIS.
   ROS_WARN_STREAM("PRESS ENTER TO UPDATE CURRENT POSITION AND SEND TRAJECTORY");
   std::cin.get();
@@ -41,9 +39,73 @@ int main(int argc, char** argv) {
   }
 
   mav_trajectory_generation::Trajectory trajectory;
+  Eigen::Vector3d position, middle_pos, velocity;
+
+  position << 0.0, 0.0, 2.0;
+  velocity << 0.0, 0.0, 0.0;
+
   planner.planTrajectory(position, velocity, &trajectory);
   planner.publishTrajectory(trajectory);
-  ROS_WARN_STREAM("DONE. GOODBYE.");
+  while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.05){
+    ros::spinOnce();
+  }
+  ros::Duration(1.0).sleep();
+
+  while(ros::ok()){
+    position << 10.0, 0.0, 2.0;
+    velocity << 0.0, 0.0, 0.0;
+
+    for (int i = 0; i < 10; i++) {
+      ros::spinOnce();  // process a few messages in the background - causes the uavPoseCallback to happen
+    }
+
+    planner.planTrajectory(position, velocity, &trajectory);
+    planner.publishTrajectory(trajectory);
+    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.05){
+      ros::spinOnce();
+    }
+    ros::Duration(0.5).sleep();
+
+
+    position[0] = 5;
+    position[1] = sqrt(25/2);
+    position[2] = sqrt(25/2) + 2;
+    middle_pos[0] = sqrt(25/3) + 5;
+    middle_pos[1] = sqrt(25/3);
+    middle_pos[2] = sqrt(25/3) + 2;
+    velocity << 0.0, 0.0, 0.0;
+
+    for (int i = 0; i < 10; i++) {
+      ros::spinOnce();  // process a few messages in the background - causes the uavPoseCallback to happen
+    }
+
+    planner.planTrajectory2(position, middle_pos, velocity, &trajectory);
+    planner.publishTrajectory(trajectory);
+    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.05){
+      ros::spinOnce();
+    }
+    ros::Duration(0.5).sleep();
+
+
+    position[0] = 0;
+    position[1] = 0;
+    position[2] = 2;
+    middle_pos[0] = -sqrt(25/3) + 5;
+    middle_pos[1] = sqrt(25/3);
+    middle_pos[2] = sqrt(25/3) + 2;
+    velocity << 0.0, 0.0, 0.0;
+
+    for (int i = 0; i < 10; i++) {
+      ros::spinOnce();  // process a few messages in the background - causes the uavPoseCallback to happen
+    }
+
+    planner.planTrajectory2(position, middle_pos, velocity, &trajectory);
+    planner.publishTrajectory(trajectory);
+    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.05){
+      ros::spinOnce();
+    }
+    ros::Duration(0.5).sleep();
+  }
 
   return 0;
 }
