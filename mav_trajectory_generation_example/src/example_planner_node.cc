@@ -46,7 +46,7 @@ int main(int argc, char** argv) {
 
   planner.planTrajectory(position, velocity, &trajectory);
   planner.publishTrajectory(trajectory);
-  while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.05){
+  while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.3){
     ros::spinOnce();
   }
   ros::Duration(1.0).sleep();
@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
 
     planner.planTrajectory(position, velocity, &trajectory);
     planner.publishTrajectory(trajectory);
-    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.05){
+    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.3){
       ros::spinOnce();
     }
     ros::Duration(0.5).sleep();
@@ -81,7 +81,7 @@ int main(int argc, char** argv) {
 
     planner.planTrajectory2(position, middle_pos, velocity, &trajectory);
     planner.publishTrajectory(trajectory);
-    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.05){
+    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.3){
       ros::spinOnce();
     }
     ros::Duration(0.5).sleep();
@@ -101,7 +101,7 @@ int main(int argc, char** argv) {
 
     planner.planTrajectory2(position, middle_pos, velocity, &trajectory);
     planner.publishTrajectory(trajectory);
-    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.05){
+    while(std::sqrt(std::pow(position[0] - planner.current_pose_.translation()[0], 2) + std::pow(position[1] - planner.current_pose_.translation()[1], 2) + std::pow(position[2] - planner.current_pose_.translation()[2], 2)) > 0.3){
       ros::spinOnce();
     }
     ros::Duration(0.5).sleep();
