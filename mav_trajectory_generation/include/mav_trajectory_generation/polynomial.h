@@ -49,6 +49,8 @@ class Polynomial {
   // kMaxConvolutionSize.
   static Eigen::MatrixXd base_coefficients_;
 
+  // constructor for 1D polynomial of degree N where coefficients_ is an
+  // Eigen::VectorXd which is resized to the degree N with value zero
   Polynomial(int N) : N_(N), coefficients_(N) { coefficients_.setZero(); }
 
   // Assigns arbitrary coefficients to a polynomial.

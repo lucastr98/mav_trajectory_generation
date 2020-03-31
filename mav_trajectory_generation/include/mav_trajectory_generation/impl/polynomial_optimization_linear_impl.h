@@ -72,6 +72,9 @@ bool PolynomialOptimization<_N>::setupFromVertices(
   n_vertices_ = vertices.size();                                                // typically 2
   n_segments_ = n_vertices_ - 1;                                                // typically 1
 
+  // segments resized to 1 (in our common cases) and filled with a segment of
+  // correct dimension but empty inside (see segment.h)
+  // a segment consists of D (in our case 3) polynomials of degree N
   segments_.resize(n_segments_, Segment(N, dimension_));                        // since segments_ is just a std::vector of segments, segments_ gets the length of n_segments_ and is filled with segments of the correct dimension_ and N but time 0.0
 
   CHECK(n_vertices_ == times.size() + 1)
@@ -342,9 +345,9 @@ bool PolynomialOptimization<_N>::solveLinear() {
         derivative_to_optimize_ <= kHighestDerivativeToOptimize);
   // Catch the fully constrained case:
   if (n_free_constraints_ == 0) {
-    DLOG(WARNING)
-        << "No free constraints set in the vertices. Polynomial can "
-           "not be optimized. Outputting fully constrained polynomial.";
+    // DLOG(WARNING)
+    //     << "No free constraints set in the vertices. Polynomial can "
+    //        "not be optimized. Outputting fully constrained polynomial.";
     updateSegmentsFromCompactConstraints();
     return true;
   }

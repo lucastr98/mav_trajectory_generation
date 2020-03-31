@@ -44,7 +44,10 @@ class Segment {
  public:
   typedef std::vector<Segment> Vector;
 
+  // constructor for segment of dimension D and polynomial degree N
   Segment(int N, int D) : time_(0.0), N_(N), D_(D) {
+    // polynomial vector is resized to dimension and filled with a 1D polynomial
+    // of correct degree (see polynomial.h)
     polynomials_.resize(D_, Polynomial(N_));
   }
   Segment(const Segment& segment) = default;

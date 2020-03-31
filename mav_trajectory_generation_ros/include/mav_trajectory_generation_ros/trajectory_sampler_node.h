@@ -64,6 +64,9 @@ class TrajectorySamplerNode {
   ros::ServiceServer stop_srv_;
   ros::Time start_time_;
 
+  std::chrono::time_point<std::chrono::high_resolution_clock> t1_;
+  std::chrono::time_point<std::chrono::high_resolution_clock> t2_;
+
   // Service client for getting the MAV interface to listen to our sent
   // commands.
   ros::ServiceClient position_hold_client_;
