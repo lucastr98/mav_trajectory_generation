@@ -12,7 +12,8 @@ add_definitions(-std=c++11)
 ############
 cs_add_executable(trajectory_generation_example
         src/example_planner.cc
-        src/example_planner_node.cc
+        # src/example_planner_node.cc
+        src/example_planner_node_2.cc
 )
 
 cs_add_executable(trajectory_generation_6dof_example
