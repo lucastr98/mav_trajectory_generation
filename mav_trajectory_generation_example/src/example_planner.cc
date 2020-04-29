@@ -209,6 +209,7 @@ bool ExamplePlanner::publishTrajectory(const mav_trajectory_generation::Trajecto
   mav_trajectory_generation::trajectoryToPolynomialTrajectoryMsg(trajectory,
                                                                  &msg);
   msg.header.frame_id = "world";
+  msg.header.stamp = ros::Time::now();
   pub_trajectory_.publish(msg);
 
   return true;
